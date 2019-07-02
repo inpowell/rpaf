@@ -1,0 +1,27 @@
+Package: rpaf
+Type: Package
+Title: Estimating PAFs with External Prevalences
+Version: 0.1.0
+Authors@R: person("Ian", "Powell", email = "powell.ian.n@gmail.com",
+                 role = c("aut", "cre"))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: A flexible package for the estimation of population
+    attributable fractions (PAFs), with the ability to consider
+    external prevalence estimates. The flexibility in this package
+    arises largely from its modular structure allowing PAFs to be
+    calculated in two stages. The first stage involves model fitting
+    and risk estimation. The second stage uses risk estimates and
+    prevalences to calculate a PAF.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Depends:
+    R (>= 3.5)
+Imports:
+    survival
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
