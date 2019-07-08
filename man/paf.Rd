@@ -2,15 +2,13 @@
 % Please edit documentation in R/paf.R
 \name{paf}
 \alias{paf}
-\alias{paf_confidence}
-\title{PAF estimates}
+\alias{paf_ci}
+\title{PAF estimates in a specific population}
 \usage{
-paf(risk, df, mod_df = identity, prevalence = 1, mod_prev = NULL,
-  ...)
+paf(risk, df, mod_df = identity, ...)
 
-paf_confidence(risk, df, mod_df = identity, prevalence = 1,
-  var_prev = 0, mod_prev = NULL, method = c("delta"), level = 0.95,
-  ...)
+paf_ci(risk, df, mod_df = identity, ..., method = c("delta"),
+  level = 0.95)
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
@@ -19,15 +17,8 @@ paf_confidence(risk, df, mod_df = identity, prevalence = 1,
 
 \item{mod_df}{a function to modify \code{df}; see Details}
 
-\item{prevalence}{a vector of external prevalence estimates corresponding to
-rows in \code{df}}
-
-\item{mod_prev}{a transition matrix to modify \code{df}; see Details}
-
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
-
-\item{var_prev}{variance-covariance matrix for the prevalence estimates}
 
 \item{method}{method to calculate confidence intervals (currently the delta
 method alone is supported)}
@@ -38,27 +29,21 @@ method alone is supported)}
 the PAF estimate as a length-one numeric vector
 }
 \description{
-Calculates a point estimate (optionally with confidence interval) for a PAF
-given information about the risk and a counterfactual distribution. External
-prevalence estimates can be used in the calculation of the PAF.
+Calculates a point estimate (\code{paf}) or a point estimate with confidence
+interval (\code{paf_ci}) for a PAF given an explicit population, information
+about the risk and a counterfactual distribution.
 }
 \details{
 If \code{df} is missing and the original population (used for risk
 estimation) can be accessed in \code{risk}, then the PAF will be calculated
 from the original population.
 
-The counterfactual population can be specified in two ways: by modifying the
-data itself, or by altering the prevalence estimates (if using). These two
-methods should not be used together.
-
-First, the data frame is modified by calling \code{mod_df}, which should be a
-function that accepts a single input data frame and outputs a similar data
-frame. The output data frame should have the same column structure and number
-of rows as the original data frame.
-
-The second method involves changing external prevalence estimates. This is
-done using a transition matrix (\code{mod_prev}) where each column sums to 1.
-Then, the counterfactual prevalence estimate is \code{new_prev <- mod_prev
-\%*\% prevalence}. By construction of \code{mod_prev}, we note that
-\code{sum(new_prev) == sum(old_prev)}.
+In this function, the counterfactual population is defined by modifying
+entries in the population data frame. This is done through the user-specified
+function \code{mod_df}, which should accept a single input data frame and
+outputs a similar data frame. The output data frame should have the same
+column structure and number of rows as the original data frame.
+}
+\seealso{
+\code{\link{paf_ext}} for PAF calculations with external prevalences
 }
