@@ -96,7 +96,7 @@ paf_ci <- function(risk, df, mod_df = identity, ...,
 #' from the original population.
 #'
 #' In this function, the counterfactual population is defined using a transition
-#' matrix \eqn{A = \code{mod_prev}} such that, if \eqn{p = \code{prevalence}} is
+#' matrix \eqn{A} = \code{mod_prev} such that, if \eqn{p} = \code{prevalence} is
 #' a vector of prevalences, then the counterfactual prevalence is \eqn{Ap}. Note
 #' that the columns of \code{mod_prev} should all sum to 1, and that
 #' \code{prevalence} is reweighted to sum to one.
