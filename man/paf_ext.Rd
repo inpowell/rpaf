@@ -48,5 +48,7 @@ that the columns of \code{mod_prev} should all sum to 1, and that
 \code{prevalence} is reweighted to sum to one.
 }
 \seealso{
-\code{\link{paf}} for PAF calculations with explicit populations
+\code{\link{paf}} for PAF calculations with explicit populations;
+  \code{\link{TransitionSimple}} and related functions to generate transition
+  matrices.
 }
