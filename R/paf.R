@@ -19,6 +19,8 @@
 #' @param risk a \code{\link{risk-object}}
 #' @param df a data frame describing the new population
 #' @param mod_df a function to modify \code{df}; see Details
+#' @param se_fit if \code{TRUE}, then return the estimated standard error in
+#'   transformed space
 #' @param method method to calculate confidence intervals (currently the delta
 #'   method alone is supported)
 #' @param level the confidence level required, default 0.95
@@ -49,7 +51,7 @@ paf <- function(risk, df, mod_df = identity, ...) {
 
 #' @rdname paf
 #' @export
-paf_ci <- function(risk, df, mod_df = identity, ...,
+paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
                            method = c("delta"), level = 0.95) {
   if (missing(df))
     df <- risk$source_df
@@ -81,7 +83,11 @@ paf_ci <- function(risk, df, mod_df = identity, ...,
   PAF <- c(PAF, PAF + sqrt(PAFs2) * qnorm(a))
   PAF <- -expm1(PAF)
 
-  structure(PAF, names = c("PAF", "lwr", "upr"))
+  ret <- structure(PAF, names = c("PAF", "lwr", "upr"))
+  if (se_fit)
+    ret <- c(ret, "se.trans" = sqrt(PAFs2))
+
+  ret
 }
 
 #' PAF estimates with external prevalences
@@ -129,7 +135,7 @@ paf_ext <- function(risk, df, prevalence, mod_prev, ...) {
 
 #' @rdname paf_ext
 #' @export
-paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ...,
+paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
                                method = c("delta"), level = 0.95) {
   # risk and prevalence -- underscore denotes modification
   r <- risk$riskfn(df, ...)
@@ -160,5 +166,10 @@ paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ...,
   PAF <- c(PAF, PAF + sqrt(PAFs2) * qnorm(a))
   PAF <- -expm1(PAF)
 
-  structure(PAF, names = c("PAF", "lwr", "upr"))
+  ret <- structure(PAF, names = c("PAF", "lwr", "upr"))
+
+  if (se_fit)
+    ret <- c(ret, "se.trans" = sqrt(PAFs2))
+
+  ret
 }

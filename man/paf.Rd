@@ -7,8 +7,8 @@
 \usage{
 paf(risk, df, mod_df = identity, ...)
 
-paf_ci(risk, df, mod_df = identity, ..., method = c("delta"),
-  level = 0.95)
+paf_ci(risk, df, mod_df = identity, ..., se_fit = TRUE,
+  method = c("delta"), level = 0.95)
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
@@ -19,6 +19,9 @@ paf_ci(risk, df, mod_df = identity, ..., method = c("delta"),
 
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
+
+\item{se_fit}{if \code{TRUE}, then return the estimated standard error in
+transformed space}
 
 \item{method}{method to calculate confidence intervals (currently the delta
 method alone is supported)}
