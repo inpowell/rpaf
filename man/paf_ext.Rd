@@ -7,7 +7,7 @@
 \usage{
 paf_ext(risk, df, prevalence, mod_prev, ...)
 
-paf_ext_ci(risk, df, prevalence, mod_prev, var_prev, ...,
+paf_ext_ci(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
   method = c("delta"), level = 0.95)
 }
 \arguments{
@@ -24,6 +24,9 @@ rows in \code{df}}
 \code{risk$dtransvar}}
 
 \item{var_prev}{variance-covariance matrix for the prevalence estimates}
+
+\item{se_fit}{if \code{TRUE}, then return the estimated standard error in
+transformed space}
 
 \item{method}{method to calculate confidence intervals (currently the delta
 method alone is supported)}
