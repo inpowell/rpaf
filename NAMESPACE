@@ -2,6 +2,7 @@
 
 export(ModifyCategorical)
 export(TransitionSimple)
+export(VarMultinom)
 export(paf)
 export(paf_ci)
 export(paf_ext)
