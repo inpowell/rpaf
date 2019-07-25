@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 pre-commit.sh
 post-commit.sh
+data-raw
