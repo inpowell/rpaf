@@ -74,7 +74,7 @@ paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
 
   # transformed PAF estimate and variance
   PAF <- log(I_) - log(I)
-  PAFs2 <- drop(t(der_paf_b) %*% risk$vcov %*% der_paf_b)
+  PAFs2 <- risk$var(der_paf_b)
 
   # confidence interval calculation
   a <- (1 - level) / 2
@@ -157,7 +157,7 @@ paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = T
   der_paf_p <- t(mod_prev) %*% r / I_ - r / I
 
   # Variance estimate
-  PAFs2 <- drop(t(der_paf_b) %*% risk$vcov %*% der_paf_b +
+  PAFs2 <- drop(risk$var(der_paf_b) +
                   t(der_paf_p) %*% var_prev %*% der_paf_p)
 
   # confidence interval

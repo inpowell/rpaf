@@ -1,27 +1,28 @@
 #' Risk function information
 #'
-#' A standardised object containing information regarding risk functions needed
-#' to calculate PAFs.
+#' A standardised object containing information regarding risk
+#' functions needed to calculate PAFs.
 #'
 #' A risk object is a list that contains the following elements:
 #'
 #' \describe{
 #'
-#' \item{\code{riskfn(df, ...)}}{A function which takes a population as
-#' described in \code{df} and optional further arguments, and outputs the event
-#' risk for each member in the population.}
+#' \item{\code{riskfn(df, ...)}}{A function which takes a population
+#' as described in \code{df} and optional further arguments, and
+#' outputs the event risk for each member in the population.}
 #'
-#' \item{\code{dtransvar(df, ...)}}{A function that returns the derivatives of
-#' risks with respect to any underlying random parameters. The output should be
-#' a matrix with element in row \eqn{i} and column \eqn{j} \deqn{J_{i,j} =
-#' \frac{\partial r(x_i; \beta)}{\partial \beta_j}} where \eqn{x_i} corresponds
-#' to row \eqn{i} of the input dataframe.}
+#' \item{\code{dtransvar(df, ...)}}{A function that returns the
+#' derivatives of risks with respect to any underlying random
+#' parameters. The output should be a matrix with element in row
+#' \eqn{i} and column \eqn{j} \deqn{J_{i,j} = \frac{\partial r(x_i;
+#' \beta)}{\partial \beta_j}} where \eqn{x_i} corresponds to row
+#' \eqn{i} of the input dataframe.}
 #'
-#' \item{\code{vcov}}{The variance-covariance matrix of the estimated parameters
-#' \eqn{\beta_j}.}
+#' \item{\code{var(d)}}{A function that for any vector \code{d},
+#' returns the variance of the dot product \eqn{d^\top \beta}.}
 #'
-#' \item{\code{source_df}}{(optional) The source population used for risk
-#' function calculation.}
+#' \item{\code{source_df}}{(optional) The source population used for
+#' risk function calculation.}
 #'
 #' }
 #'
@@ -54,7 +55,7 @@ risk_glm <- function(model) {
       X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
       X * mu.eta(drop(X %*% coef(model)))
     },
-    vcov = vcov(model),
+    var = function(d) drop(t(d) %*% vcov(model) %*% d),
     source_df = model.frame(model)
   )
 }
