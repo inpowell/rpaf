@@ -5,10 +5,10 @@
 \alias{paf_ci}
 \title{PAF estimates in a specific population}
 \usage{
-paf(risk, df, mod_df = identity, ...)
+paf(risk, df, mod_df = identity, ..., na.action)
 
 paf_ci(risk, df, mod_df = identity, ..., se_fit = TRUE,
-  method = c("delta"), level = 0.95)
+  method = c("delta"), level = 0.95, na.action)
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
@@ -20,11 +20,15 @@ paf_ci(risk, df, mod_df = identity, ..., se_fit = TRUE,
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
 
-\item{se_fit}{if \code{TRUE}, then return the estimated standard error in
-transformed space}
+\item{na.action}{how NAs are treated, as per
+\code{\link{na.action}} using the terms from
+\code{\link{risk-object}}.}
 
-\item{method}{method to calculate confidence intervals (currently the delta
-method alone is supported)}
+\item{se_fit}{if \code{TRUE}, then return the estimated standard
+error in transformed space}
+
+\item{method}{method to calculate confidence intervals (currently
+the delta method alone is supported)}
 
 \item{level}{the confidence level required, default 0.95}
 }
@@ -32,21 +36,24 @@ method alone is supported)}
 the PAF estimate as a length-one numeric vector
 }
 \description{
-Calculates a point estimate (\code{paf}) or a point estimate with confidence
-interval (\code{paf_ci}) for a PAF given an explicit population, information
-about the risk and a counterfactual distribution.
+Calculates a point estimate (\code{paf}) or a point estimate with
+confidence interval (\code{paf_ci}) for a PAF given an explicit
+population, information about the risk and a counterfactual
+distribution.
 }
 \details{
 If \code{df} is missing and the original population (used for risk
-estimation) can be accessed in \code{risk}, then the PAF will be calculated
-from the original population.
+estimation) can be accessed in \code{risk}, then the PAF will be
+calculated from the original population.
 
-In this function, the counterfactual population is defined by modifying
-entries in the population data frame. This is done through the user-specified
-function \code{mod_df}, which should accept a single input data frame and
-outputs a similar data frame. The output data frame should have the same
-column structure and number of rows as the original data frame.
+In this function, the counterfactual population is defined by
+modifying entries in the population data frame. This is done
+through the user-specified function \code{mod_df}, which should
+accept a single input data frame and outputs a similar data frame.
+The output data frame should have the same column structure and
+number of rows as the original data frame.
 }
 \seealso{
-\code{\link{paf_ext}} for PAF calculations with external prevalences
+\code{\link{paf_ext}} for PAF calculations with external
+  prevalences
 }

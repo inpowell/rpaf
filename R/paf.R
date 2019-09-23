@@ -1,31 +1,37 @@
 #' PAF estimates in a specific population
 #'
-#' Calculates a point estimate (\code{paf}) or a point estimate with confidence
-#' interval (\code{paf_ci}) for a PAF given an explicit population, information
-#' about the risk and a counterfactual distribution.
+#' Calculates a point estimate (\code{paf}) or a point estimate with
+#' confidence interval (\code{paf_ci}) for a PAF given an explicit
+#' population, information about the risk and a counterfactual
+#' distribution.
 #'
 #' If \code{df} is missing and the original population (used for risk
-#' estimation) can be accessed in \code{risk}, then the PAF will be calculated
-#' from the original population.
+#' estimation) can be accessed in \code{risk}, then the PAF will be
+#' calculated from the original population.
 #'
-#' In this function, the counterfactual population is defined by modifying
-#' entries in the population data frame. This is done through the user-specified
-#' function \code{mod_df}, which should accept a single input data frame and
-#' outputs a similar data frame. The output data frame should have the same
-#' column structure and number of rows as the original data frame.
+#' In this function, the counterfactual population is defined by
+#' modifying entries in the population data frame. This is done
+#' through the user-specified function \code{mod_df}, which should
+#' accept a single input data frame and outputs a similar data frame.
+#' The output data frame should have the same column structure and
+#' number of rows as the original data frame.
 #'
-#' @seealso \code{\link{paf_ext}} for PAF calculations with external prevalences
+#' @seealso \code{\link{paf_ext}} for PAF calculations with external
+#'   prevalences
 #'
 #' @param risk a \code{\link{risk-object}}
 #' @param df a data frame describing the new population
 #' @param mod_df a function to modify \code{df}; see Details
-#' @param se_fit if \code{TRUE}, then return the estimated standard error in
-#'   transformed space
-#' @param method method to calculate confidence intervals (currently the delta
-#'   method alone is supported)
+#' @param se_fit if \code{TRUE}, then return the estimated standard
+#'   error in transformed space
+#' @param method method to calculate confidence intervals (currently
+#'   the delta method alone is supported)
 #' @param level the confidence level required, default 0.95
 #' @param ... further arguments passed to \code{risk$riskfn} and
 #'   \code{risk$dtransvar}
+#' @param na.action how NAs are treated, as per
+#'   \code{\link{na.action}} using the terms from
+#'   \code{\link{risk-object}}.
 #'
 #' @return the PAF estimate as a length-one numeric vector
 #' @name paf
@@ -33,9 +39,17 @@ NULL
 
 #' @rdname paf
 #' @export
-paf <- function(risk, df, mod_df = identity, ...) {
+paf <- function(risk, df, mod_df = identity, ..., na.action) {
   if (missing(df))
     df <- risk$source_df
+
+  if (!is.null(risk$terms) && missing(na.action)) {
+    df <- model.frame(risk$terms, data = df)
+  } else if (!is.null(risk$terms) && !missing(na.action)) {
+    df <- model.frame(risk$terms, data = df, na.action = na.action)
+  } else {
+    df <- match.fun(na.action)(df)
+  }
 
   # build counterfactual scenario
   mdf <- mod_df(df)
@@ -52,9 +66,17 @@ paf <- function(risk, df, mod_df = identity, ...) {
 #' @rdname paf
 #' @export
 paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
-                           method = c("delta"), level = 0.95) {
+                           method = c("delta"), level = 0.95, na.action) {
   if (missing(df))
     df <- risk$source_df
+
+  if (!is.null(risk$terms) && missing(na.action)) {
+    df <- model.frame(risk$terms, data = df)
+  } else if (!is.null(risk$terms) && !missing(na.action)) {
+    df <- model.frame(risk$terms, data = df, na.action = na.action)
+  } else {
+    df <- match.fun(na.action)(df)
+  }
 
   # build counterfactual scenarios
   df_ <- mod_df(df)
@@ -122,7 +144,15 @@ NULL
 
 #' @rdname paf_ext
 #' @export
-paf_ext <- function(risk, df, prevalence, mod_prev, ...) {
+paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action) {
+  if (!is.null(risk$terms) && missing(na.action)) {
+    df <- model.frame(risk$terms, data = df)
+  } else if (!is.null(risk$terms) && !missing(na.action)) {
+    df <- model.frame(risk$terms, data = df, na.action = na.action)
+  } else {
+    df <- match.fun(na.action)(df)
+  }
+
   r <- risk$riskfn(df, ...)
   p <- prevalence / sum(prevalence)
   p_ <- drop(mod_prev %*% p)
@@ -136,7 +166,15 @@ paf_ext <- function(risk, df, prevalence, mod_prev, ...) {
 #' @rdname paf_ext
 #' @export
 paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
-                               method = c("delta"), level = 0.95) {
+                               method = c("delta"), level = 0.95, na.action = NULL) {
+  if (!is.null(risk$terms) && missing(na.action)) {
+    df <- model.frame(risk$terms, data = df)
+  } else if (!is.null(risk$terms) && !missing(na.action)) {
+    df <- model.frame(risk$terms, data = df, na.action = na.action)
+  } else {
+    df <- match.fun(na.action)(df)
+  }
+
   # risk and prevalence -- underscore denotes modification
   r <- risk$riskfn(df, ...)
   p <- prevalence

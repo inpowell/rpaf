@@ -5,10 +5,10 @@
 \alias{paf_ext_ci}
 \title{PAF estimates with external prevalences}
 \usage{
-paf_ext(risk, df, prevalence, mod_prev, ...)
+paf_ext(risk, df, prevalence, mod_prev, ..., na.action)
 
 paf_ext_ci(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
-  method = c("delta"), level = 0.95)
+  method = c("delta"), level = 0.95, na.action = NULL)
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
@@ -23,13 +23,17 @@ rows in \code{df}}
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
 
+\item{na.action}{how NAs are treated, as per
+\code{\link{na.action}} using the terms from
+\code{\link{risk-object}}.}
+
 \item{var_prev}{variance-covariance matrix for the prevalence estimates}
 
-\item{se_fit}{if \code{TRUE}, then return the estimated standard error in
-transformed space}
+\item{se_fit}{if \code{TRUE}, then return the estimated standard
+error in transformed space}
 
-\item{method}{method to calculate confidence intervals (currently the delta
-method alone is supported)}
+\item{method}{method to calculate confidence intervals (currently
+the delta method alone is supported)}
 
 \item{level}{the confidence level required, default 0.95}
 }

@@ -26,6 +26,11 @@ parameters. The output should be a matrix with element in row
 \item{\code{var(d)}}{A function that for any vector \code{d},
 returns the variance of the dot product \eqn{d^\top \beta}.}
 
+\item{\code{terms}}{(optional) A \code{formula} or \code{terms}
+object from the underlying model that can be used for missing data
+handling. If this is not specified, then the PAF methods will use
+only complete cases.}
+
 \item{\code{source_df}}{(optional) The source population used for
 risk function calculation.}
 
