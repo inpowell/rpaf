@@ -23,6 +23,10 @@ ModifyCategorical <- function(factor, to, from = NULL, ...) {
     }
   else
     function(df) {
-      df[[factor]] <- factor(to, levels = levels(df[[factor]]))
+      # df[[factor]] <- factor(to, levels = levels(df[[factor]]))
+      # the following handles missing data better:
+      from <- setdiff(levels(df[[factor]]), to)
+      df[df[[factor]] %in% from, factor] <- to
+      df
     }
 }
