@@ -293,6 +293,17 @@ risk_pch <- function(formula, data, breaks, ...) {
 
       apply(tS, 2, "*", P)
     },
+    hazardfn = function(df, time, ...) {
+      # get all hazards up to time
+      ldf <- lengthen(df)
+      l <- risk$hazardfn(ldf, time, ...)
+      vec2mat(l, ldf$.ID, ldf$.period)
+    },
+    dhazardfn = function(df, time, ...) {
+      ldf <- lengthen(df)
+      l <- risk$dhazardfn(ldf, time, ...)
+      mat2arr(l, ldf$.ID, ldf$.period)
+    },
     terms = delete.response(s_tt),
     var = function(d) drop(t(d) %*% vcov(model) %*% d)
   )
