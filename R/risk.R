@@ -159,6 +159,26 @@ risk_survreg <- function(model) {
       }
       return(J)
     },
+    hazardfn = function(df, time, ...) {
+      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+      lp <- drop(X %*% coef)
+      gt <- trans(time)
+      sigma <- model$scale[get_strata(df)]
+
+      FF <- dd$density((gt - lp) / sigma)
+
+      return(1 / sigma * FF[,3] / FF[,2])
+    },
+    dhazardfn = function(df, time, ...) {
+      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+      lp <- drop(X %*% coef)
+      gt <- trans(time)
+      sigma <- model$scale[get_strata(df)]
+
+      FF <- dd$density((gt - lp) / sigma)
+
+      return(X * (-1/sigma^2) * FF[,3] / FF[,2] * (FF[,4] + FF[,3] / FF[,2]))
+    },
     terms = Terms,
     var = function(d) drop(t(d) %*% vcov(model) %*% d)
   )
