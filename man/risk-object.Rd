@@ -37,6 +37,7 @@ risk function calculation.}
 }
 }
 \seealso{
-Other risk functions: \code{\link{risk_glm}}
+Other risk functions: \code{\link{risk_glm}},
+  \code{\link{risk_survreg}}
 }
 \concept{risk functions}

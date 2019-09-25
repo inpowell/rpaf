@@ -18,6 +18,7 @@ with a binary predictor. This can be used for logistic regression, or other
 models with binary dependent variables, such as the probit model.
 }
 \seealso{
-Other risk functions: \code{\link{risk-object}}
+Other risk functions: \code{\link{risk-object}},
+  \code{\link{risk_survreg}}
 }
 \concept{risk functions}
