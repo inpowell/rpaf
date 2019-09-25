@@ -22,6 +22,6 @@ test_that("risk_survreg gives correct hazard and grad-hazard in exponential", {
   ehaz <- 1 / predict(sr, newdata = ovarian, type = 'response')
   edhaz <- - ehaz * X
 
-  expect_equal(risk$hazardfn(ovarian, 1), ehaz)
-  expect_equal(risk$dhazardfn(ovarian, 1), edhaz)
+  expect_equal(risk$hazardfn(ovarian, 2), ehaz)
+  expect_equal(risk$dhazardfn(ovarian, 2), edhaz)
 })

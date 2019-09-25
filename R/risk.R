@@ -107,6 +107,7 @@ risk_survreg <- function(model) {
     trans <- function(x) x  # identity transformation
   } else {
     trans <- dd$trans
+    dtrans <- dd$dtrans
   }
   if (!is.null(dd$dist)) dd <- survreg.distributions[[dd$dist]]
 
@@ -163,21 +164,23 @@ risk_survreg <- function(model) {
       X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
+      dgt <- dtrans(time)
       sigma <- model$scale[get_strata(df)]
 
       FF <- dd$density((gt - lp) / sigma)
 
-      return(1 / sigma * FF[,3] / FF[,2])
+      return(dgt / sigma * FF[,3] / FF[,2])
     },
     dhazardfn = function(df, time, ...) {
       X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
+      dgt <- dtrans(time)
       sigma <- model$scale[get_strata(df)]
 
       FF <- dd$density((gt - lp) / sigma)
 
-      return(X * (-1/sigma^2) * FF[,3] / FF[,2] * (FF[,4] + FF[,3] / FF[,2]))
+      return(X * (-dgt/sigma^2) * FF[,3] / FF[,2] * (FF[,4] + FF[,3] / FF[,2]))
     },
     terms = Terms,
     var = function(d) drop(t(d) %*% vcov(model) %*% d)
