@@ -308,3 +308,72 @@ risk_pch <- function(formula, data, breaks, ...) {
     var = function(d) drop(t(d) %*% vcov(model) %*% d)
   )
 }
+
+#' Risk information from relative risks and their standard errors
+#'
+#' This function synthesises relative risk estimates and standard
+#' errors from a specified set of factors. The covariance matrix is
+#' estimated conservatively according to the \code{eta} parameter:
+#' \eqn{\eta = 1} corresponds to the "worst-case" variance of the PAF,
+#' while \eqn{\eta = 0} corresponds to uncorrelated log-relative
+#' risks.
+#'
+#' @param RR a named list of relative risk estimates; see Examples
+#' @param se.trans a named list of standard error estimates for log-relative risks
+#' @param eta number between 0 and 1, ranging from least to most conservative
+#'
+#' @return a \code{\link{risk-object}} list
+#' @export
+#'
+#' @family risk functions
+#'
+#' @example inst/examples/eg_risk_relative.R
+risk_relative <- function(RR, se.trans, eta = 1.0) {
+  if (eta > 1.0 || eta < 0.0)
+    stop("Parameter eta must be between 0 and 1.")
+
+  if (names(RR) != names(se.trans) ||
+      !all.equal(lapply(RR, names), lapply(se.trans, names)))
+    stop("Lists RR and se.trans must have same name order.")
+
+  # calculate total relative risks using outer product (note:
+  # reference is upper left entry)
+  orr <- Reduce(outer, RR)
+  names(dimnames(orr)) <- names(RR)
+
+  # convert to data frame and remove risk column, which should always
+  # appear at the end
+  ref <- as.data.frame.table(orr)
+  rr <- ref[[length(RR) + 1]]
+  ref <- subset(ref, select = -(length(RR) + 1))
+
+  # Model matrix equivalent
+  Xref <- lapply(ref, function(fact) {
+    mat <- matrix(0, nrow = length(fact), ncol = nlevels(fact))
+    mat[col(mat) == as.numeric(fact)] <- 1
+    mat
+  })
+  Xref <- do.call(cbind, Xref)
+
+  # Jacobian reference
+  Jref <- Xref * rr
+
+  # Standard error reference
+  SEref <- do.call(c, se.trans)
+
+  list(
+    riskfn = function(df, ...) {
+      rr[match.data.frame(df, ref)]
+    },
+    dtransvar = function(df, ...) {
+      Jref[match.data.frame(df, ref), ]
+    },
+    var = function(d) {
+      s <- sign(d)
+      R <- eta * s %o% s
+      diag(R) <- 1
+      V <- (SEref %o% SEref) * R
+      drop(t(d) %*% V %*% d)
+    }
+  )
+}
