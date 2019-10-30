@@ -39,7 +39,7 @@ NULL
 
 #' @rdname paf
 #' @export
-paf <- function(risk, df, mod_df = identity, ..., na.action) {
+paf <- function(risk, df, mod_df = identity, ..., na.action = options("na.action")) {
   if (missing(df))
     df <- risk$source_df
 
@@ -66,7 +66,7 @@ paf <- function(risk, df, mod_df = identity, ..., na.action) {
 #' @rdname paf
 #' @export
 paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
-                           method = c("delta"), level = 0.95, na.action) {
+                           method = c("delta"), level = 0.95, na.action = options("na.action")) {
   if (missing(df))
     df <- risk$source_df
 
@@ -144,7 +144,7 @@ NULL
 
 #' @rdname paf_ext
 #' @export
-paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action) {
+paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action = options("na.action")) {
   if (!is.null(risk$terms) && missing(na.action)) {
     df <- model.frame(risk$terms, data = df)
   } else if (!is.null(risk$terms) && !missing(na.action)) {
@@ -166,7 +166,7 @@ paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action) {
 #' @rdname paf_ext
 #' @export
 paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
-                               method = c("delta"), level = 0.95, na.action = NULL) {
+                               method = c("delta"), level = 0.95, na.action = options("na.action")) {
   if (!is.null(risk$terms) && missing(na.action)) {
     df <- model.frame(risk$terms, data = df)
   } else if (!is.null(risk$terms) && !missing(na.action)) {

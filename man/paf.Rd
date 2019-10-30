@@ -5,10 +5,11 @@
 \alias{paf_ci}
 \title{PAF estimates in a specific population}
 \usage{
-paf(risk, df, mod_df = identity, ..., na.action)
+paf(risk, df, mod_df = identity, ..., na.action = options("na.action"))
 
 paf_ci(risk, df, mod_df = identity, ..., se_fit = TRUE,
-  method = c("delta"), level = 0.95, na.action)
+  method = c("delta"), level = 0.95,
+  na.action = options("na.action"))
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}

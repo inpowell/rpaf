@@ -5,10 +5,12 @@
 \alias{paf_ext_ci}
 \title{PAF estimates with external prevalences}
 \usage{
-paf_ext(risk, df, prevalence, mod_prev, ..., na.action)
+paf_ext(risk, df, prevalence, mod_prev, ...,
+  na.action = options("na.action"))
 
 paf_ext_ci(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
-  method = c("delta"), level = 0.95, na.action = NULL)
+  method = c("delta"), level = 0.95,
+  na.action = options("na.action"))
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
