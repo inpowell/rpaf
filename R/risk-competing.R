@@ -35,6 +35,8 @@
 #' @param ... further arguments to be passed to
 #'   \code{\link[survival]{survreg}}
 #'
+#' @family risk functions
+#'
 #' @return a \code{\link{risk-object}} list
 #' @export
 risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {

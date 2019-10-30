@@ -51,6 +51,7 @@ paf_ci(risk, minifhs, ModifyCategorical("SMOKE", "Never", "<30/day", ">=30/day")
 }
 \seealso{
 Other risk functions: \code{\link{risk-object}},
-  \code{\link{risk_glm}}, \code{\link{risk_survreg}}
+  \code{\link{risk_cr}}, \code{\link{risk_glm}},
+  \code{\link{risk_pch}}, \code{\link{risk_survreg}}
 }
 \concept{risk functions}

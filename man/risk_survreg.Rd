@@ -18,6 +18,7 @@ location-scale distribution.
 }
 \seealso{
 Other risk functions: \code{\link{risk-object}},
-  \code{\link{risk_glm}}, \code{\link{risk_relative}}
+  \code{\link{risk_cr}}, \code{\link{risk_glm}},
+  \code{\link{risk_pch}}, \code{\link{risk_relative}}
 }
 \concept{risk functions}
