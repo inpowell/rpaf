@@ -40,8 +40,25 @@
 #' @return a \code{\link{risk-object}} list
 #' @export
 risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {
-  risk1 <- risk_pch(update.formula(resp1, predictors), data, breaks)
-  risk2 <- risk_pch(update.formula(resp2, predictors), data, breaks)
+  # get Surv objects from formulas
+  mr1 <- model.response(model.frame(resp1, data, na.action = na.pass))
+  mr2 <- model.response(model.frame(resp2, data, na.action = na.pass))
+  # convert to matrices
+  mmr1 <- as.matrix(mr1)
+  mmr2 <- as.matrix(mr2)
+  # censor secondary event by primary
+  mmr2[,1] <- pmin(mmr1[,1], mmr2[,1])
+  mmr2[as.logical(mmr1[,2]), 2] <- 0
+
+  f1 <- Surv(mmr1[,1], mmr1[,2]) ~ .
+  f2 <- Surv(mmr2[,1], mmr2[,2]) ~ .
+
+  # new model.frames with data
+  data1 <- model.frame(f1, data, na.action = na.pass)
+  data2 <- model.frame(f2, data, na.action = na.pass)
+
+  risk1 <- risk_pch(update(f1, predictors), data1, breaks)
+  risk2 <- risk_pch(update(f2, predictors), data2, breaks)
 
   list(
     riskfn = function(df, time, ...) {
