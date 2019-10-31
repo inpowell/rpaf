@@ -49,4 +49,7 @@ scenario will include the remainder in the original \code{from} population.
   groups may not be accurate and this function has undefined behaviour.
 }
 
+\seealso{
+Other transition functions: \code{\link{TransitionComplete}}
+}
 \concept{transition functions}

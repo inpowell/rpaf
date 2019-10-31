@@ -77,3 +77,66 @@ TransitionSimple <- function(df, column, from, to, prop = NULL) {
   }
   tmat
 }
+
+#' Simple all-to-one transition matrix
+#'
+#' Generates a transiton matrix where members of the population take
+#' the specified level of a particular risk factor, with all other
+#' risk factors unaffected.
+#'
+#' Suppose that \code{df} is a data frame of risk factors, with risk
+#' factor of interest (RFOI) in \code{df[[column]]}. We are interested
+#' in the counterfactual scenario where every level of RFOI (except
+#' those in \code{stay}) are converted to \code{to}.
+#'
+#' @section Warning:
+#'
+#'   If \code{df} contains any extraneous columns, then the dispersion
+#'   among groups may not be accurate and this function has undefined
+#'   behaviour.
+#'
+#' @param df a data frame of risk factors, see Warning
+#' @param column the name of the risk factor of interest
+#' @param to the population target level in \code{column}
+#' @param stay names of levels in \code{column} that should *not* be
+#'   modified
+#'
+#' @return a square transition matrix
+#' @export
+#'
+#' @family transition functions
+TransitionComplete <- function(df, column, to, stay = NULL) {
+  if (any(duplicated(df)))
+    stop("Input data frame cannot have any duplicate rows.")
+
+  n <- nrow(df)
+  i <- seq_len(n)
+  f <- df[, names(df) != column]
+
+  # these two splits should have the same order, we hope
+  i_spl <- split(i, f)
+  col_spl <- split(df[[column]], f)
+
+  submats <- lapply(col_spl, function(col) {
+    col <- as.character(col)
+    # from indices
+    fi <- which(!col %in% c(to, stay))
+    # to index
+    ti <- which(col == to)
+
+    # transition submatrix
+    A <- diag(nrow = length(col))
+    A[fi, fi] <- 0
+    A[ti, fi] <- 1
+    A
+  })
+
+  # final transition matrix
+  tmat <- matrix(0, nrow = n, ncol = n)
+  for (K in seq_along(i_spl)) {
+    ii <- i_spl[[K]]
+    A <- submats[[K]]
+    tmat[ii, ii] <- A
+  }
+  tmat
+}
