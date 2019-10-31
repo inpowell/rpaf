@@ -11,6 +11,9 @@ mat2arr(data, rowf, colf)
 
 \item{rowf, colf}{factors of length \code{nrow(data)}}
 }
+\value{
+
+}
 \description{
 This has undefined behaviour when
 \code{anyDuplicated(interaction(rowf,colf))}, which is not tested.
@@ -19,3 +22,4 @@ This has undefined behaviour when
 We want \code{rowf} for dim 1, \code{colf} for dim 2, and the
 columns of \code{data} for dim 3.
 }
+\keyword{internal}

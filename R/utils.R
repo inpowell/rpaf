@@ -8,6 +8,8 @@
 #' @param nomatch,incomparables see \code{\link{match}}
 #'
 #' @return an integer vector of length \code{nrow(x)}
+#'
+#' @keywords internal
 match.data.frame <- function(x, table, by = intersect(names(x), names(table)),
                              nomatch = NA_integer_, incomparables = NULL) {
   # select relevant columns only -- also ensures same order
@@ -59,6 +61,8 @@ ci2se <- function(ci, trans = identity, level = 0.95) {
 #'   same length as data
 #'
 #' @return a matrix
+#'
+#' @keywords internal
 vec2mat <- function(data, rowf, colf) {
   rowf <- as.factor(rowf)
   colf <- as.factor(colf)
@@ -81,6 +85,8 @@ vec2mat <- function(data, rowf, colf) {
 #' @param rowf,colf factors of length \code{nrow(data)}
 #'
 #' @return
+#'
+#' @keywords internal
 mat2arr <- function(data, rowf, colf) {
   rowf <- as.factor(rowf)
   colf <- as.factor(colf)

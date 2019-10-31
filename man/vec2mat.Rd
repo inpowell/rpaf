@@ -19,3 +19,4 @@ a matrix
 This has undefined behaviour when
 \code{anyDuplicated(interaction(rowf,colf))}, which is not tested.
 }
+\keyword{internal}

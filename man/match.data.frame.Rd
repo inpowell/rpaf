@@ -22,3 +22,4 @@ an integer vector of length \code{nrow(x)}
 \description{
 Find row indices of data frame that match a reference
 }
+\keyword{internal}
