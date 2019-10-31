@@ -53,6 +53,7 @@ without any reference to these intermediate variables.
 \seealso{
 Other risk functions: \code{\link{risk-object}},
   \code{\link{risk_cr}}, \code{\link{risk_glm}},
-  \code{\link{risk_relative}}, \code{\link{risk_survreg}}
+  \code{\link{risk_manual}}, \code{\link{risk_relative}},
+  \code{\link{risk_survreg}}
 }
 \concept{risk functions}

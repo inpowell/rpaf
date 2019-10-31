@@ -379,3 +379,31 @@ risk_relative <- function(RR, se.trans, eta = 1.0) {
     }
   )
 }
+
+#' Manual risk input
+#'
+#' Basic risk object function that takes risk estimates, gradients with respect
+#' to coefficients, and coefficient variances.
+#'
+#' @param table reference risk factor data frame
+#' @param risk risks corresponding to rows in \code{table}
+#' @param Jref reference Jacobian matrix with rows corresponding to \code{table}
+#' @param varmat variance matrix of underlying coefficients
+#'
+#' @return a \code{\link{risk-object}} list
+#' @export
+#'
+#' @family risk functions
+risk_manual <- function(table, risk, Jref, varmat) {
+  list(
+    riskfn = function(df, ...) {
+      risk[match.data.frame(df, table, ...)]
+    },
+    dtransvar = function(df, ...) {
+      Jref[match.data.frame(df, table, ...), ]
+    },
+    var = function(d) {
+      drop(t(d) %*% varmat %*% d)
+    }
+  )
+}
