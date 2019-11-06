@@ -61,10 +61,11 @@ risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {
   risk2 <- risk_pch(update(f2, predictors), data2, breaks)
 
   list(
-    riskfn = function(df, time, ...) {
+    # SCOPING WARNING: conflict in `data`
+    riskfn = function(data, time, ...) {
       # hazards lambda
-      l1 <- risk1$hazardfn(df, time)
-      l2 <- risk2$hazardfn(df, time)
+      l1 <- risk1$hazardfn(data, time)
+      l2 <- risk2$hazardfn(data, time)
 
       diffs <- diff(pmin(time, breaks))
       S1 <- diffs * t(l1)
@@ -80,9 +81,10 @@ risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {
       # final risk
       rowSums(l1 / (l1 + l2) * (S1_lag * S2_lag - S1 * S2))
     },
-    dtransvar = function(df, time, ...) {
-      l1 <- risk1$hazardfn(df, time)
-      l2 <- risk2$hazardfn(df, time)
+    # SCOPING WARNING: conflict in `data`
+    dtransvar = function(data, time, ...) {
+      l1 <- risk1$hazardfn(data, time)
+      l2 <- risk2$hazardfn(data, time)
 
       diffs <- diff(pmin(time, breaks))
       S1 <- diffs * t(l1)
@@ -97,8 +99,8 @@ risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {
 
       # hazard gradients
       # d1: ID; d2: time; d3: coef
-      dl1 <- risk1$dhazardfn(df, time)
-      dl2 <- risk2$dhazardfn(df, time)
+      dl1 <- risk1$dhazardfn(data, time)
+      dl2 <- risk2$dhazardfn(data, time)
 
       # survival gradients
       dS1 <- aperm(dl1, c(2, 1, 3)) * diffs # d1: time; d2: ID; d3: coef

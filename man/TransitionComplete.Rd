@@ -4,10 +4,10 @@
 \alias{TransitionComplete}
 \title{Simple all-to-one transition matrix}
 \usage{
-TransitionComplete(df, column, to, stay = NULL)
+TransitionComplete(data, column, to, stay = NULL)
 }
 \arguments{
-\item{df}{a data frame of risk factors, see Warning}
+\item{data}{a data frame of risk factors, see Warning}
 
 \item{column}{the name of the risk factor of interest}
 
@@ -25,15 +25,15 @@ the specified level of a particular risk factor, with all other
 risk factors unaffected.
 }
 \details{
-Suppose that \code{df} is a data frame of risk factors, with risk
-factor of interest (RFOI) in \code{df[[column]]}. We are interested
+Suppose that \code{data} is a data frame of risk factors, with risk
+factor of interest (RFOI) in \code{data[[column]]}. We are interested
 in the counterfactual scenario where every level of RFOI (except
 those in \code{stay}) are converted to \code{to}.
 }
 \section{Warning}{
 
 
-  If \code{df} contains any extraneous columns, then the dispersion
+  If \code{data} contains any extraneous columns, then the dispersion
   among groups may not be accurate and this function has undefined
   behaviour.
 }

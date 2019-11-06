@@ -17,16 +17,16 @@
 ModifyCategorical <- function(factor, to, from = NULL, ...) {
   from <- c(from, ...)
   if (!is.null(from))
-    function(df) {
-      df[df[[factor]] %in% from, factor] <- to
-      df
+    function(data) {
+      data[data[[factor]] %in% from, factor] <- to
+      data
     }
   else
-    function(df) {
-      # df[[factor]] <- factor(to, levels = levels(df[[factor]]))
+    function(data) {
+      # data[[factor]] <- factor(to, levels = levels(data[[factor]]))
       # the following handles missing data better:
-      from <- setdiff(levels(df[[factor]]), to)
-      df[df[[factor]] %in% from, factor] <- to
-      df
+      from <- setdiff(levels(data[[factor]]), to)
+      data[data[[factor]] %in% from, factor] <- to
+      data
     }
 }

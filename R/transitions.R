@@ -4,8 +4,8 @@
 #' factor level are distributed amongst the other levels, holding all other risk
 #' factors constant.
 #'
-#' Suppose that \code{df} is a data frame of risk factors, with the risk factor
-#' of interest (RFOI) in \code{df[[column]]}. We are interested in the
+#' Suppose that \code{data} is a data frame of risk factors, with the risk factor
+#' of interest (RFOI) in \code{data[[column]]}. We are interested in the
 #' counterfactual scenario when those taking RFOI level \code{from} are replaced
 #' with RFOI level \code{to}.
 #'
@@ -22,10 +22,10 @@
 #'
 #' @section Warning:
 #'
-#'   If \code{df} contains any extraneous columns, then the dispersion among
+#'   If \code{data} contains any extraneous columns, then the dispersion among
 #'   groups may not be accurate and this function has undefined behaviour.
 #'
-#' @param df a data frame of risk factors; see Warning
+#' @param data a data frame of risk factors; see Warning
 #' @param column the name of the risk factor of interest
 #' @param from the source population level in \code{column}
 #' @param to the target population level(s) in \code{column}
@@ -35,8 +35,8 @@
 #' @export
 #'
 #' @family transition functions
-TransitionSimple <- function(df, column, from, to, prop = NULL) {
-  if (any(duplicated(df)))
+TransitionSimple <- function(data, column, from, to, prop = NULL) {
+  if (any(duplicated(data)))
     stop("Input data frame cannot have duplicate rows.")
 
   if (is.null(prop))
@@ -46,13 +46,13 @@ TransitionSimple <- function(df, column, from, to, prop = NULL) {
   if (remain < 0)
     stop("Proportions add up to more than 1")
 
-  n <- nrow(df)
+  n <- nrow(data)
   i <- seq_len(n)
-  f <- df[, names(df) != column]
+  f <- data[, names(data) != column]
 
   # these two splits should have the same order, we hope
   i_spl <- split(i, f)
-  col_spl <- split(df[[column]], f)
+  col_spl <- split(data[[column]], f)
 
   submats <- lapply(col_spl, function(col) {
     col <- as.character(col)
@@ -84,18 +84,18 @@ TransitionSimple <- function(df, column, from, to, prop = NULL) {
 #' the specified level of a particular risk factor, with all other
 #' risk factors unaffected.
 #'
-#' Suppose that \code{df} is a data frame of risk factors, with risk
-#' factor of interest (RFOI) in \code{df[[column]]}. We are interested
+#' Suppose that \code{data} is a data frame of risk factors, with risk
+#' factor of interest (RFOI) in \code{data[[column]]}. We are interested
 #' in the counterfactual scenario where every level of RFOI (except
 #' those in \code{stay}) are converted to \code{to}.
 #'
 #' @section Warning:
 #'
-#'   If \code{df} contains any extraneous columns, then the dispersion
+#'   If \code{data} contains any extraneous columns, then the dispersion
 #'   among groups may not be accurate and this function has undefined
 #'   behaviour.
 #'
-#' @param df a data frame of risk factors, see Warning
+#' @param data a data frame of risk factors, see Warning
 #' @param column the name of the risk factor of interest
 #' @param to the population target level in \code{column}
 #' @param stay names of levels in \code{column} that should *not* be
@@ -105,17 +105,17 @@ TransitionSimple <- function(df, column, from, to, prop = NULL) {
 #' @export
 #'
 #' @family transition functions
-TransitionComplete <- function(df, column, to, stay = NULL) {
-  if (any(duplicated(df)))
+TransitionComplete <- function(data, column, to, stay = NULL) {
+  if (any(duplicated(data)))
     stop("Input data frame cannot have any duplicate rows.")
 
-  n <- nrow(df)
+  n <- nrow(data)
   i <- seq_len(n)
-  f <- df[, names(df) != column]
+  f <- data[, names(data) != column]
 
   # these two splits should have the same order, we hope
   i_spl <- split(i, f)
-  col_spl <- split(df[[column]], f)
+  col_spl <- split(data[[column]], f)
 
   submats <- lapply(col_spl, function(col) {
     col <- as.character(col)

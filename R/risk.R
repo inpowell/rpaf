@@ -7,11 +7,11 @@
 #'
 #' \describe{
 #'
-#' \item{\code{riskfn(df, ...)}}{A function which takes a population
-#' as described in \code{df} and optional further arguments, and
+#' \item{\code{riskfn(data, ...)}}{A function which takes a population
+#' as described in \code{data} and optional further arguments, and
 #' outputs the event risk for each member in the population.}
 #'
-#' \item{\code{dtransvar(df, ...)}}{A function that returns the
+#' \item{\code{dtransvar(data, ...)}}{A function that returns the
 #' derivatives of risks with respect to any underlying random
 #' parameters. The output should be a matrix with element in row
 #' \eqn{i} and column \eqn{j} \deqn{J_{i,j} = \frac{\partial r(x_i;
@@ -26,7 +26,7 @@
 #' handling. If this is not specified, then the PAF methods will use
 #' only complete cases.}
 #'
-#' \item{\code{source_df}}{(optional) The source population used for
+#' \item{\code{source_data}}{(optional) The source population used for
 #' risk function calculation.}
 #'
 #' }
@@ -53,16 +53,16 @@ risk_glm <- function(model) {
   mu.eta <- model$family$mu.eta
 
   list(
-    riskfn = function(df, ...) {
-      predict.glm(model, newdata = df, type = "response")
+    riskfn = function(data, ...) {
+      predict.glm(model, newdata = data, type = "response")
     },
-    dtransvar = function(df, ...) {
-      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+    dtransvar = function(data, ...) {
+      X <- model.matrix(Terms, data = data, xlev = model$xlevels, contrasts.arg = model$contrasts)
       X * mu.eta(drop(X %*% coef(model)))
     },
     var = function(d) drop(t(d) %*% vcov(model) %*% d),
     terms = Terms,
-    source_df = model.frame(model)
+    source_data = model.frame(model)
   )
 }
 
@@ -111,7 +111,7 @@ risk_survreg <- function(model) {
   }
   if (!is.null(dd$dist)) dd <- survreg.distributions[[dd$dist]]
 
-  # this block defines get_strata <- function(df) {...} to get indices
+  # this block defines get_strata <- function(data) {...} to get indices
   if (length(strata) && !fixedscale) {
     #
     # We need to reconstruct the original "strata" variable
@@ -134,18 +134,18 @@ risk_survreg <- function(model) {
   }
 
   list(
-    riskfn = function(df, time, ...) {
-      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+    riskfn = function(data, time, ...) {
+      X <- model.matrix(Terms, data = data, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
-      sigma <- model$scale[get_strata(df)]
+      sigma <- model$scale[get_strata(data)]
       return(dd$density((gt - lp) / sigma)[,1]) # first column corresponds to CDF
     },
-    dtransvar = function(df, time, ...) {
-      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+    dtransvar = function(data, time, ...) {
+      X <- model.matrix(Terms, data = data, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
-      strata_i <- get_strata(df)
+      strata_i <- get_strata(data)
       sigma <- model$scale[strata_i]
 
       qmean <- (gt - lp) / sigma
@@ -160,23 +160,23 @@ risk_survreg <- function(model) {
       }
       return(J)
     },
-    hazardfn = function(df, time, ...) {
-      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+    hazardfn = function(data, time, ...) {
+      X <- model.matrix(Terms, data = data, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
       dgt <- dtrans(time)
-      sigma <- model$scale[get_strata(df)]
+      sigma <- model$scale[get_strata(data)]
 
       FF <- dd$density((gt - lp) / sigma)
 
       return(dgt / sigma * FF[,3] / FF[,2])
     },
-    dhazardfn = function(df, time, ...) {
-      X <- model.matrix(Terms, data = df, xlev = model$xlevels, contrasts.arg = model$contrasts)
+    dhazardfn = function(data, time, ...) {
+      X <- model.matrix(Terms, data = data, xlev = model$xlevels, contrasts.arg = model$contrasts)
       lp <- drop(X %*% coef)
       gt <- trans(time)
       dgt <- dtrans(time)
-      sigma <- model$scale[get_strata(df)]
+      sigma <- model$scale[get_strata(data)]
 
       FF <- dd$density((gt - lp) / sigma)
 
@@ -258,8 +258,10 @@ risk_pch <- function(formula, data, breaks, ...) {
   }
 
   list(
-    riskfn = function(df, time, ...) {
-      ldf <- lengthen(df)
+    # WARNING: be careful with scoping -- data in these functions is
+    # different to data in risk_pch
+    riskfn = function(data, time, ...) {
+      ldf <- lengthen(data)
       # ignore periods outside of time range
       keep <- (breaks[-length(breaks)] <= time)[ldf$.period]
       ldf <- subset(ldf, keep)
@@ -272,8 +274,9 @@ risk_pch <- function(formula, data, breaks, ...) {
       r <- risk$riskfn(ldf, t)
       1 - tapply(1 - r, ldf$.ID, FUN = prod)
     },
-    dtransvar = function(df, time, ...) {
-      ldf <- lengthen(df)
+    # SCOPING WARNING: conflict in `data`
+    dtransvar = function(data, time, ...) {
+      ldf <- lengthen(data)
       # ignore periods outside of time range
       keep <- (breaks[-length(breaks)] <= time)[ldf$.period]
       ldf <- subset(ldf, keep)
@@ -295,14 +298,16 @@ risk_pch <- function(formula, data, breaks, ...) {
 
       apply(tS, 2, "*", P)
     },
-    hazardfn = function(df, time, ...) {
+    # SCOPING WARNING: conflict in `data`
+    hazardfn = function(data, time, ...) {
       # get all hazards up to time
-      ldf <- lengthen(df)
+      ldf <- lengthen(data)
       l <- risk$hazardfn(ldf, time, ...)
       vec2mat(l, ldf$.ID, ldf$.period)
     },
-    dhazardfn = function(df, time, ...) {
-      ldf <- lengthen(df)
+    # SCOPING WARNING: conflict in `data`
+    dhazardfn = function(data, time, ...) {
+      ldf <- lengthen(data)
       l <- risk$dhazardfn(ldf, time, ...)
       mat2arr(l, ldf$.ID, ldf$.period)
     },
@@ -364,11 +369,11 @@ risk_relative <- function(RR, se.trans, eta = 1.0) {
   SEref <- do.call(c, se.trans)
 
   list(
-    riskfn = function(df, ...) {
-      rr[match.data.frame(df, ref)]
+    riskfn = function(data, ...) {
+      rr[match.data.frame(data, ref)]
     },
-    dtransvar = function(df, ...) {
-      Jref[match.data.frame(df, ref), ]
+    dtransvar = function(data, ...) {
+      Jref[match.data.frame(data, ref), ]
     },
     var = function(d) {
       s <- sign(d)
@@ -396,11 +401,11 @@ risk_relative <- function(RR, se.trans, eta = 1.0) {
 #' @family risk functions
 risk_manual <- function(table, risk, Jref, varmat) {
   list(
-    riskfn = function(df, ...) {
-      risk[match.data.frame(df, table, ...)]
+    riskfn = function(data, ...) {
+      risk[match.data.frame(data, table, ...)]
     },
-    dtransvar = function(df, ...) {
-      Jref[match.data.frame(df, table, ...), ]
+    dtransvar = function(data, ...) {
+      Jref[match.data.frame(data, table, ...), ]
     },
     var = function(d) {
       drop(t(d) %*% varmat %*% d)

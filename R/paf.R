@@ -5,13 +5,13 @@
 #' population, information about the risk and a counterfactual
 #' distribution.
 #'
-#' If \code{df} is missing and the original population (used for risk
+#' If \code{data} is missing and the original population (used for risk
 #' estimation) can be accessed in \code{risk}, then the PAF will be
 #' calculated from the original population.
 #'
 #' In this function, the counterfactual population is defined by
 #' modifying entries in the population data frame. This is done
-#' through the user-specified function \code{mod_df}, which should
+#' through the user-specified function \code{mod_data}, which should
 #' accept a single input data frame and outputs a similar data frame.
 #' The output data frame should have the same column structure and
 #' number of rows as the original data frame.
@@ -20,8 +20,8 @@
 #'   prevalences
 #'
 #' @param risk a \code{\link{risk-object}}
-#' @param df a data frame describing the new population
-#' @param mod_df a function to modify \code{df}; see Details
+#' @param data a data frame describing the new population
+#' @param mod_data a function to modify \code{data}; see Details
 #' @param se_fit if \code{TRUE}, then return the estimated standard
 #'   error in transformed space
 #' @param method method to calculate confidence intervals (currently
@@ -39,24 +39,24 @@ NULL
 
 #' @rdname paf
 #' @export
-paf <- function(risk, df, mod_df = identity, ..., na.action = options("na.action")) {
-  if (missing(df))
-    df <- risk$source_df
+paf <- function(risk, data, mod_data = identity, ..., na.action = options("na.action")) {
+  if (missing(data))
+    data <- risk$source_data
 
   if (!is.null(risk$terms) && missing(na.action)) {
-    df <- model.frame(risk$terms, data = df)
+    data <- model.frame(risk$terms, data = data)
   } else if (!is.null(risk$terms) && !missing(na.action)) {
-    df <- model.frame(risk$terms, data = df, na.action = na.action)
+    data <- model.frame(risk$terms, data = data, na.action = na.action)
   } else {
-    df <- match.fun(na.action)(df)
+    data <- match.fun(na.action)(data)
   }
 
   # build counterfactual scenario
-  mdf <- mod_df(df)
+  mdata <- mod_data(data)
 
   # estimate risk and incidence
-  r <- risk$riskfn(df, ...)
-  r_ <- risk$riskfn(mdf, ...)
+  r <- risk$riskfn(data, ...)
+  r_ <- risk$riskfn(mdata, ...)
   I <- sum(r)
   I_ <- sum(r_)
 
@@ -65,31 +65,31 @@ paf <- function(risk, df, mod_df = identity, ..., na.action = options("na.action
 
 #' @rdname paf
 #' @export
-paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
+paf_ci <- function(risk, data, mod_data = identity, ..., se_fit = TRUE,
                            method = c("delta"), level = 0.95, na.action = options("na.action")) {
-  if (missing(df))
-    df <- risk$source_df
+  if (missing(data))
+    data <- risk$source_data
 
   if (!is.null(risk$terms) && missing(na.action)) {
-    df <- model.frame(risk$terms, data = df)
+    data <- model.frame(risk$terms, data = data)
   } else if (!is.null(risk$terms) && !missing(na.action)) {
-    df <- model.frame(risk$terms, data = df, na.action = na.action)
+    data <- model.frame(risk$terms, data = data, na.action = na.action)
   } else {
-    df <- match.fun(na.action)(df)
+    data <- match.fun(na.action)(data)
   }
 
   # build counterfactual scenarios
-  df_ <- mod_df(df)
+  data_ <- mod_data(data)
 
   # estimate risk and incidence
-  r <- risk$riskfn(df, ...)
-  r_ <- risk$riskfn(df_, ...)
+  r <- risk$riskfn(data, ...)
+  r_ <- risk$riskfn(data_, ...)
   I <- sum(r)
   I_ <- sum(r_)
 
   # calculate gradients
-  der_r <- risk$dtransvar(df, ...)
-  der_r_ <- risk$dtransvar(df_, ...)
+  der_r <- risk$dtransvar(data, ...)
+  der_r_ <- risk$dtransvar(data_, ...)
 
   # ... with respect to coefficients:
   der_paf_b <- colSums(der_r_) / I_ - colSums(der_r) / I
@@ -119,7 +119,7 @@ paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
 #' prevalence estimates, information about the risk and a counterfactual
 #' distribution.
 #'
-#' If \code{df} is missing and the original population (used for risk
+#' If \code{data} is missing and the original population (used for risk
 #' estimation) can be accessed in \code{risk}, then the PAF will be calculated
 #' from the original population.
 #'
@@ -135,25 +135,25 @@ paf_ci <- function(risk, df, mod_df = identity, ..., se_fit = TRUE,
 #'
 #' @inheritParams paf
 #' @param prevalence a vector of external prevalence estimates corresponding to
-#'   rows in \code{df}
+#'   rows in \code{data}
 #' @param var_prev variance-covariance matrix for the prevalence estimates
-#' @param mod_prev a transition matrix to modify \code{df}; see Details
+#' @param mod_prev a transition matrix to modify \code{data}; see Details
 #'
 #' @name paf_ext
 NULL
 
 #' @rdname paf_ext
 #' @export
-paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action = options("na.action")) {
+paf_ext <- function(risk, data, prevalence, mod_prev, ..., na.action = options("na.action")) {
   if (!is.null(risk$terms) && missing(na.action)) {
-    df <- model.frame(risk$terms, data = df)
+    data <- model.frame(risk$terms, data = data)
   } else if (!is.null(risk$terms) && !missing(na.action)) {
-    df <- model.frame(risk$terms, data = df, na.action = na.action)
+    data <- model.frame(risk$terms, data = data, na.action = na.action)
   } else {
-    df <- match.fun(na.action)(df)
+    data <- match.fun(na.action)(data)
   }
 
-  r <- risk$riskfn(df, ...)
+  r <- risk$riskfn(data, ...)
   p <- prevalence / sum(prevalence)
   p_ <- drop(mod_prev %*% p)
 
@@ -165,18 +165,18 @@ paf_ext <- function(risk, df, prevalence, mod_prev, ..., na.action = options("na
 
 #' @rdname paf_ext
 #' @export
-paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
+paf_ext_ci <- function(risk, data, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
                                method = c("delta"), level = 0.95, na.action = options("na.action")) {
   if (!is.null(risk$terms) && missing(na.action)) {
-    df <- model.frame(risk$terms, data = df)
+    data <- model.frame(risk$terms, data = data)
   } else if (!is.null(risk$terms) && !missing(na.action)) {
-    df <- model.frame(risk$terms, data = df, na.action = na.action)
+    data <- model.frame(risk$terms, data = data, na.action = na.action)
   } else {
-    df <- match.fun(na.action)(df)
+    data <- match.fun(na.action)(data)
   }
 
   # risk and prevalence -- underscore denotes modification
-  r <- risk$riskfn(df, ...)
+  r <- risk$riskfn(data, ...)
   p <- prevalence
   p_ <- drop(mod_prev %*% p)
 
@@ -188,7 +188,7 @@ paf_ext_ci <- function(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = T
   PAF <- log(I_) - log(I)
 
   # derivatives/gradient/Jacobian of risk wrt coefficients
-  der_r <- risk$dtransvar(df, ...)
+  der_r <- risk$dtransvar(data, ...)
 
   # PAF dertivatives wrt coefficients (b) and prevalences (p)
   der_paf_b <- colSums(der_r * p_) / I_ - colSums(der_r * p) / I

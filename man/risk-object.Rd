@@ -12,11 +12,11 @@ A risk object is a list that contains the following elements:
 
 \describe{
 
-\item{\code{riskfn(df, ...)}}{A function which takes a population
-as described in \code{df} and optional further arguments, and
+\item{\code{riskfn(data, ...)}}{A function which takes a population
+as described in \code{data} and optional further arguments, and
 outputs the event risk for each member in the population.}
 
-\item{\code{dtransvar(df, ...)}}{A function that returns the
+\item{\code{dtransvar(data, ...)}}{A function that returns the
 derivatives of risks with respect to any underlying random
 parameters. The output should be a matrix with element in row
 \eqn{i} and column \eqn{j} \deqn{J_{i,j} = \frac{\partial r(x_i;
@@ -31,7 +31,7 @@ object from the underlying model that can be used for missing data
 handling. If this is not specified, then the PAF methods will use
 only complete cases.}
 
-\item{\code{source_df}}{(optional) The source population used for
+\item{\code{source_data}}{(optional) The source population used for
 risk function calculation.}
 
 }

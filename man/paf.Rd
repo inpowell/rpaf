@@ -5,18 +5,19 @@
 \alias{paf_ci}
 \title{PAF estimates in a specific population}
 \usage{
-paf(risk, df, mod_df = identity, ..., na.action = options("na.action"))
+paf(risk, data, mod_data = identity, ...,
+  na.action = options("na.action"))
 
-paf_ci(risk, df, mod_df = identity, ..., se_fit = TRUE,
+paf_ci(risk, data, mod_data = identity, ..., se_fit = TRUE,
   method = c("delta"), level = 0.95,
   na.action = options("na.action"))
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
 
-\item{df}{a data frame describing the new population}
+\item{data}{a data frame describing the new population}
 
-\item{mod_df}{a function to modify \code{df}; see Details}
+\item{mod_data}{a function to modify \code{data}; see Details}
 
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
@@ -43,13 +44,13 @@ population, information about the risk and a counterfactual
 distribution.
 }
 \details{
-If \code{df} is missing and the original population (used for risk
+If \code{data} is missing and the original population (used for risk
 estimation) can be accessed in \code{risk}, then the PAF will be
 calculated from the original population.
 
 In this function, the counterfactual population is defined by
 modifying entries in the population data frame. This is done
-through the user-specified function \code{mod_df}, which should
+through the user-specified function \code{mod_data}, which should
 accept a single input data frame and outputs a similar data frame.
 The output data frame should have the same column structure and
 number of rows as the original data frame.

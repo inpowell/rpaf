@@ -5,22 +5,22 @@
 \alias{paf_ext_ci}
 \title{PAF estimates with external prevalences}
 \usage{
-paf_ext(risk, df, prevalence, mod_prev, ...,
+paf_ext(risk, data, prevalence, mod_prev, ...,
   na.action = options("na.action"))
 
-paf_ext_ci(risk, df, prevalence, mod_prev, var_prev, ..., se_fit = TRUE,
-  method = c("delta"), level = 0.95,
+paf_ext_ci(risk, data, prevalence, mod_prev, var_prev, ...,
+  se_fit = TRUE, method = c("delta"), level = 0.95,
   na.action = options("na.action"))
 }
 \arguments{
 \item{risk}{a \code{\link{risk-object}}}
 
-\item{df}{a data frame describing the new population}
+\item{data}{a data frame describing the new population}
 
 \item{prevalence}{a vector of external prevalence estimates corresponding to
-rows in \code{df}}
+rows in \code{data}}
 
-\item{mod_prev}{a transition matrix to modify \code{df}; see Details}
+\item{mod_prev}{a transition matrix to modify \code{data}; see Details}
 
 \item{...}{further arguments passed to \code{risk$riskfn} and
 \code{risk$dtransvar}}
@@ -46,7 +46,7 @@ prevalence estimates, information about the risk and a counterfactual
 distribution.
 }
 \details{
-If \code{df} is missing and the original population (used for risk
+If \code{data} is missing and the original population (used for risk
 estimation) can be accessed in \code{risk}, then the PAF will be calculated
 from the original population.
 

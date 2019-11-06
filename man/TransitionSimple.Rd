@@ -4,10 +4,10 @@
 \alias{TransitionSimple}
 \title{Simple to/from transition matrix}
 \usage{
-TransitionSimple(df, column, from, to, prop = NULL)
+TransitionSimple(data, column, from, to, prop = NULL)
 }
 \arguments{
-\item{df}{a data frame of risk factors; see Warning}
+\item{data}{a data frame of risk factors; see Warning}
 
 \item{column}{the name of the risk factor of interest}
 
@@ -26,8 +26,8 @@ factor level are distributed amongst the other levels, holding all other risk
 factors constant.
 }
 \details{
-Suppose that \code{df} is a data frame of risk factors, with the risk factor
-of interest (RFOI) in \code{df[[column]]}. We are interested in the
+Suppose that \code{data} is a data frame of risk factors, with the risk factor
+of interest (RFOI) in \code{data[[column]]}. We are interested in the
 counterfactual scenario when those taking RFOI level \code{from} are replaced
 with RFOI level \code{to}.
 
@@ -45,7 +45,7 @@ scenario will include the remainder in the original \code{from} population.
 \section{Warning}{
 
 
-  If \code{df} contains any extraneous columns, then the dispersion among
+  If \code{data} contains any extraneous columns, then the dispersion among
   groups may not be accurate and this function has undefined behaviour.
 }
 
