@@ -105,7 +105,7 @@ paf_ci <- function(risk, data, mod_data = identity, ..., se_fit = TRUE,
   PAF <- c(PAF, PAF + sqrt(PAFs2) * qnorm(a))
   PAF <- -expm1(PAF)
 
-  ret <- structure(PAF, names = c("PAF", "lwr", "upr"))
+  ret <- structure(PAF, names = c("PAF", rev(format.perc(a, 3))))
   if (se_fit)
     ret <- c(ret, "se.trans" = sqrt(PAFs2))
 
@@ -204,7 +204,7 @@ paf_ext_ci <- function(risk, data, prevalence, mod_prev, var_prev, ..., se_fit =
   PAF <- c(PAF, PAF + sqrt(PAFs2) * qnorm(a))
   PAF <- -expm1(PAF)
 
-  ret <- structure(PAF, names = c("PAF", "lwr", "upr"))
+  ret <- structure(PAF, names = c("PAF", rev(format.perc(a, 3))))
 
   if (se_fit)
     ret <- c(ret, "se.trans" = sqrt(PAFs2))

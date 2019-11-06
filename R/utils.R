@@ -103,3 +103,17 @@ mat2arr <- function(data, rowf, colf) {
   arr[] <- data[order(col(data), colf, rowf)]
   arr
 }
+
+#' Format a decimal as a percentage
+#'
+#' Copied shamelessly from \code{stats:::format.perc}.
+#'
+#' @param probs vector of probabilities
+#' @param digits number of digits to display
+#'
+#' @keywords internal
+format.perc <- function (probs, digits) {
+  paste(format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits),
+        "%")
+}
+
