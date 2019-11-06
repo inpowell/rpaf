@@ -311,6 +311,7 @@ risk_pch <- function(formula, data, breaks, ...) {
       l <- risk$dhazardfn(ldf, time, ...)
       mat2arr(l, ldf$.ID, ldf$.period)
     },
+    model = function() { model },
     terms = delete.response(s_tt),
     var = function(d) drop(t(d) %*% vcov(model) %*% d)
   )

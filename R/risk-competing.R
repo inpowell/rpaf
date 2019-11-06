@@ -125,6 +125,8 @@ risk_cr <- function(resp1, resp2, predictors, data, breaks, ...) {
 
       cbind(dr1, dr2)
     },
+    model1 = function() { risk1$model() },
+    model2 = function() { risk2$model() },
     terms = risk1$terms,
     var = function(d) {
       p <- length(d) %/% 2L
